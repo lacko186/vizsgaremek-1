@@ -23,10 +23,12 @@
         }
 
         .header {
+            position: relative;
             background-color: var(--primary-color);
             color: var(--text-light);
             padding: 1rem;
             box-shadow: var(--shadow);
+            text-align: center;
         }
 
         .container {
@@ -159,6 +161,10 @@
         }
 
         nav {
+            float: left;
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
             background-color: var(--text-light);
             padding: 8px;
             width: 80px;
@@ -168,10 +174,17 @@
             border-radius: 3px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             transition: width 0.6s linear;
+            margin-right: 10px;
+            margin-top: 20px;
+            max-height: 70px;
+        }
+
+        nav, .header{
+            display: flex;
         }
 
         nav.active {
-            width: 270px;
+            width: 240px;
         }
 
         nav ul {
@@ -202,7 +215,7 @@
             position: relative;
             color: #000;
             text-decoration: none;
-            margin: 0 10px;
+            margin: 0 5px;
         }
 
         .icon {
@@ -300,7 +313,7 @@
                 </div>
                 <div>
                     <button id="switchBtn">
-                        <img src="switch.png" alt="Switch" style="width: 20px; height: 20px;">
+                        <img src="switch.png" alt="Switch" style="width: 20px; height: 20px; max-width: 40px; max-width: 20px;">
                     </button>
                 </div>
             </div>
