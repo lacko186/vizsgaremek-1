@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Számla Generátor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #001F3F;
+            --accent-color: #FFC107;
+            --text-light: #FFFFFF;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #FFD700;
+            transform: translateY(-2px);
+        }
+
+        #invoice {
+            border: 2px solid var(--accent-color);
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            background-color: white;
+            box-shadow: var(--shadow);
+        }
+
+        #invoiceDetails {
+            white-space: pre-wrap; /* Ensures that whitespace is preserved */
+            font-size: 14px;
+        }
+
+        canvas {
+            margin-top: 20px;
+            border: 1px solid var(--accent-color); /* QR kód keret */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Számla Generátor</h1>
+    </div>
+    <div class="container">
+        <form id="invoiceForm">
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <input type="text" id="name" placeholder="Név" required>
+                </div>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="E-mail" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <input type="tel" id="phone" placeholder="Telefonszám" required>
+                </div>
+                <div class="input-wrapper">
+                    <input type="date" id="date" required>
+                </div>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" id="address" placeholder="Cím" required>
+            </div>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <select id="paymentMethod" required>
+                        <option value="" disabled selected>Fizetési Mód</option>
+                        <option value="Készpénz">Készpénz</option>
+                        <option value="Bankkártya">Bankkártya</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <select id="ticketType" required>
+                        <option value="" disabled selected>Jegytípus</option>
+                        <option value="Felnőtt">Felnőtt</option>
+                        <option value="Gyermek">Gyermek</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button-group">
+                <button type="button" onclick="generateInvoice()">Számla Generálása</button>
+            </div>
+        </form>
+
+        <div id="invoice">
+            <h2>Számla Részletek</h2>
+            <pre id="invoiceDetails"></pre>
+            <canvas id="qrcode"></canvas>
+            <div class="button-group">
+                <button onclick="downloadPDF()">PDF Letöltése</button>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    function generateRandomId() {
+        return 'ID-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    function generateInvoice() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const date = document.getElementById('date').value;
+        const address = document.getElementById('address').value;
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        const ticketType = document.getElementById('ticketType').value;
+
+        if (!name || !email || !phone || !address || !paymentMethod || !ticketType) {
+            alert("Kérjük, töltse ki az összes mezőt!");
+            return;
+        }
+
+        const uniqueId = generateRandomId();
+        const invoiceDetails = `Név: ${name}
+E-mail: ${email}
+Telefonszám: ${phone}
+Érvényesség: ${date}
+Cím: ${address}
+Fizetési Mód: ${paymentMethod}
+Jegytípus: ${ticketType}
+Egyedi Azonosító: ${uniqueId}`;
+
+        document.getElementById('invoiceDetails').innerText = invoiceDetails;
+        document.getElementById('invoice').style.display = 'block';
+
+        // QR kód generálása
+        const qrCode = new QRious({
+            element: document.getElementById('qrcode'),
+            value: uniqueId,
+            size: 150,
+            foreground: 'black'
+        });
+
+        // QR kód kép URL tárolása a PDF generálásához
+        document.getElementById('qrcode').toDataURL("image/png", function (dataUrl) {
+            localStorage.setItem('qrCodeDataUrl', dataUrl);
+        });
+    }
+
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        const invoiceDetails = document.getElementById('invoiceDetails').innerText;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(16);
+        pdf.text("Számla", 20, 20);
+        pdf.setFontSize(12);
+        const splitDetails = pdf.splitTextToSize(invoiceDetails, 180);
+        pdf.text(splitDetails, 20, 40);
+
+        // QR kód kép betöltése a helyi tárolóból
+        const qrCodeDataUrl = localStorage.getItem('qrCodeDataUrl');
+        if (qrCodeDataUrl) {
+            pdf.addImage(qrCodeDataUrl, 'PNG', 150, 40, 40, 40);
+        }
+
+        pdf.save("szamla.pdf");
+    }
+</script>
+
+</body>
+</html>
