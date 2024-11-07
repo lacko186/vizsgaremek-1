@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volán Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        :root {
+            --primary-color: #0D47A1; /* Kék */
+            --accent-color: #FF6F00; /* Narancssárga */
+            --text-light: #FFFFFF;
+            --text-dark: #212121;
+            --border-radius: 10px;
+            --input-height: 45px;
+            --button-height: 50px;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+            --border-color: #E0E0E0;
+            --focus-border-color: #0D47A1;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--text-light);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .container:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        p {
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 0 12px 0 36px; /* Bal oldalon extra hely az ikonoknak */
+            height: var(--input-height);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        input[type="email"]:focus, input[type="password"]:focus {
+            border-color: var(--focus-border-color);
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .material-icons.input-icon {
+            position: absolute;
+            left: 12px; /* Bal oldalon fixáljuk az ikonokat */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            color: var(--primary-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: var(--shadow-light);
+            height: var(--button-height);
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            background-color: #0A47A1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .google-btn {
+            background-color: #4285F4;
+            color: var(--text-light);
+            font-size: 1rem;
+            box-shadow: var(--shadow-light);
+            height: var(--button-height);
+            margin-bottom: 20px;
+        }
+
+        .google-btn:hover {
+            background-color: #357AE8;
+        }
+
+        .register-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color var(--transition-speed);
+        }
+
+        .register-link:hover {
+            color: var(--accent-color);
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            input[type="email"], input[type="password"] {
+                height: 40px;
+                padding: 0 10px 0 30px;
+            }
+
+            button {
+                font-size: 1rem;
+                height: 40px;
+            }
+
+            .social-btn {
+                flex-direction: column;
+            }
+
+            .social-btn button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Üdvözöllek!</h1>
+        <p>Jelentkezz be a fiókodba:</p>
+
+        <!-- Email Input -->
+        <div class="input-wrapper">
+            <span class="material-icons input-icon">mail</span>
+            <input id="email" type="email" placeholder="Email cím" required>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-wrapper">
+            <span class="material-icons input-icon">lock</span>
+            <input id="password" type="password" placeholder="Jelszó" required>
+        </div>
+
+        <!-- Login Button -->
+        <button type="button" onclick="validateForm()">Bejelentkezés</button>
+
+        <!-- Google Login Button -->
+        <button class="google-btn" type="button">
+            <span class="material-icons">google</span>
+            Google Bejelentkezés
+        </button>
+
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="loading-spinner">
+            <span class="material-icons">hourglass_empty</span> Kérem várjon...
+        </div>
+
+        <!-- Register Link -->
+        <a href="#" class="register-link">Még nincs fiókod? Regisztrálj itt!</a>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <script>
+        function validateForm() {
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            var errorMessage = document.getElementById("error-message");
+            var loadingSpinner = document.getElementById("loading-spinner");
+
+            // Alapvető validáció
+            if (!email || !password) {
+                errorMessage.textContent = "Kérlek töltsd ki az összes mezőt!";
+                return;
+            } else {
+                errorMessage.textContent = "";
+            }
+
+            // Email validáció
+            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email)) {
+                errorMessage.textContent = "Érvénytelen email cím!";
+                return;
+            }
+
+            // Jelszó validáció
+            if (password.length < 6) {
+                errorMessage.textContent = "A jelszónak legalább 6 karakter hosszúnak kell lennie!";
+                return;
+            }
+
+            // Loading spinner megjelenítése
+            loadingSpinner.classList.add("active");
+
+            // Szimulált bejelentkezési folyamat
+            setTimeout(function() {
+                loadingSpinner.classList.remove("active");
+                alert("Bejelentkezés sikeres!");
+            }, 2000); // 2 másodperc várakozás
+        }
+    </script>
+</body>
+</html>
